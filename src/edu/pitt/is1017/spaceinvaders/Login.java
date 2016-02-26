@@ -126,8 +126,19 @@ public class Login {
 		btnLogin.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				User user = new User(tfLoginEmail.getText(), tfLoginPassword.getText());
-				
-				db.closeConnection();
+
+				if(user.ifLoggedIn()){
+					Thread t = new Thread("Game Launch"){
+						public void run(){
+							Game g = new Game(user);
+							g.gameLoop();
+						}
+					};
+					
+					t.start();
+				}else{
+					System.out.println("login fail");
+				}
 			}
 		});
 		panelLogin.add(btnLogin, "6, 10");

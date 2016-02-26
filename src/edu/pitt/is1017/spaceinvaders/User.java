@@ -16,26 +16,22 @@ public class User {
 	private DbUtilities db;
 	
 	public User(int userID){
-		db = new DbUtilities();
-		String sql = "UPDATE users";
-		sql = sql + " SET lastName='"+ lastName +"', firstName='"+ firstName +"',";
-		sql = sql + " email='"+ email +"', password=md5('"+ password +"')";
-		sql = sql + " WHERE userID='"+ userID +"'";
-		db.executeQuery(sql);
-		showMsg("Your information was updated.");
-		db.closeConnection();
+		String sql = "SELECT * FROM users";
+		sql = sql + " WHERE userID="+ userID +"";
 	}
+	
 	public User(String email, String password){
 		db = new DbUtilities();
-		String sql = "SELECT COUNT(*) FROM users ";
+		String sql = "SELECT COUNT(*), userID FROM users ";
 		sql = sql + " WHERE email= '"+ email +"' AND password=md5('"+ password +"');";
+		ResultSet rsLogIn = db.getResultSet(sql);
 		
-		ResultSet rs = db.getResultSet(sql);
 		boolean found= false;
-		
 		try {
-			while(rs.next()){
-				int count = rs.getInt(1);
+			while(rsLogIn.next()){
+				userID = rsLogIn.getInt("userID");
+				//check if login info is correct/exists
+				int count = rsLogIn.getInt("COUNT(*)");
 				if(count > 0){
 					found = true;
 				}
@@ -46,25 +42,27 @@ public class User {
 		
 		JFrame frame = new JFrame();
 		if(found){
-			JOptionPane.showMessageDialog(frame, "You are logged in!");
+			//login successful, start game
 			loggedIn = true;
 		}else{
+			//login failed, show msg
 			JOptionPane.showMessageDialog(frame, "Invalid login information.");
 			loggedIn = false;
 		}
-		
-		db.closeConnection();
 	}
 	
-	public User(String lastname, String firstname, String email, String password){
+	public User(String last, String first, String em, String pw){
 		db = new DbUtilities();	
 		String sql = "INSERT INTO alieninvasion.users ";
-		sql = sql + "( lastname , firstname, email, password) ";
+		sql = sql + "( lastName , firstName, email, password) ";
 		sql = sql + "VALUES ";
-		sql = sql + "('"+ lastName +"','"+ firstName +"','"+ email +"',md5('"+ password +"'));";
-		
+		sql = sql + "('"+ last +"','"+ first +"','"+ em +"',md5('"+ pw +"'));";
 		db.executeQuery(sql);
-		db.closeConnection();
+		
+		lastName = last;
+		firstName = first;
+		email = em;
+		password = pw;
 	}
 	
 	public void saveUserInfo(){
@@ -76,8 +74,6 @@ public class User {
 		sql = sql + " WHERE userID='"+ userID +"'";
 		db.executeQuery(sql);
 		showMsg("Your information was saved.");
-		
-		db.closeConnection();
 	}
 	
 	public int getUserID(){
@@ -112,9 +108,15 @@ public class User {
 		return password;
 	}
 	
+	public boolean ifLoggedIn(){
+		return loggedIn;
+	}
+	
 	public void setPassword(String pw){
 		password = pw;
 	}
+	
+	
 	
 	public void showMsg(String msg){
 		JFrame frame = new JFrame();

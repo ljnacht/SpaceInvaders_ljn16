@@ -63,10 +63,16 @@ public class Game extends Canvas {
 	/** True if game logic needs to be applied this loop, normally as a result of a game event */
 	private boolean logicRequiredThisLoop = false;
 	
+	public ScoreTracker ST;
+	private User user;
+	
 	/**
 	 * Construct our game and set it running.
 	 */
-	public Game() {
+	public Game(User u) {
+		user = u;
+		ST = new ScoreTracker(user);
+		
 		// create a frame to contain our game
 		JFrame container = new JFrame("Space Invaders 101");
 		
@@ -117,7 +123,8 @@ public class Game extends Canvas {
 	 * Start a fresh game, this should clear out any old data and
 	 * create a new set.
 	 */
-	private void startGame() {
+	public void startGame() {
+		
 		// clear out any existing entities and intialise a new set
 		entities.clear();
 		initEntities();
@@ -173,6 +180,8 @@ public class Game extends Canvas {
 	public void notifyDeath() {
 		message = "Oh no! They got you, try again?";
 		waitingForKeyPress = true;
+		
+		ST.recordFinalScore();
 	}
 	
 	/**
@@ -182,6 +191,8 @@ public class Game extends Canvas {
 	public void notifyWin() {
 		message = "Well done! You Win!";
 		waitingForKeyPress = true;
+		
+		ST.recordFinalScore();
 	}
 	
 	/**
@@ -190,6 +201,7 @@ public class Game extends Canvas {
 	public void notifyAlienKilled() {
 		// reduce the alient count, if there are none left, the player has won!
 		alienCount--;
+		
 		
 		if (alienCount == 0) {
 			notifyWin();
@@ -202,7 +214,7 @@ public class Game extends Canvas {
 			
 			if (entity instanceof AlienEntity) {
 				// speed up by 2%
-				entity.setHorizontalMovement(entity.getHorizontalMovement() * 1.02);
+				entity.setHorizontalMovement(entity.getHorizontalMovement() * 100);
 			}
 		}
 	}
@@ -236,6 +248,8 @@ public class Game extends Canvas {
 	 * <p>
 	 */
 	public void gameLoop() {
+		
+		
 		long lastLoopTime = System.currentTimeMillis();
 		
 		// keep looping round til the game ends
@@ -440,11 +454,11 @@ public class Game extends Canvas {
 	 * @param argv The arguments that are passed into our game
 	 */
 	public static void main(String argv[]) {
-		Game g =new Game();
+		//Game g =new Game(1);
 
 		// Start the main game loop, note: this method will not
 		// return until the game has finished running. Hence we are
 		// using the actual main thread to run the game.
-		g.gameLoop();
+		//g.gameLoop();
 	}
 }

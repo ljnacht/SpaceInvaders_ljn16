@@ -87,6 +87,7 @@ public class DbUtilities {
         } catch (Exception e) {
         	e.printStackTrace(); // debug
         }
+        closeConnection();
         return null;
     }
     
