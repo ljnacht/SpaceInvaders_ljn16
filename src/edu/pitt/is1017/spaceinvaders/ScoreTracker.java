@@ -68,8 +68,10 @@ public class ScoreTracker {
 			ResultSet rsUser = db.getResultSet(sql);
 			
 			//highest score for leader
-			sql = "SELECT lastName, firstName, MAX(scoreValue) FROM finalscores ";
-			sql = sql + "JOIN users ON fk_userID = userID GROUP BY lastName, firstName;";
+			sql = "SELECT lastName, firstName, MAX(scoreValue) FROM finalscores JOIN users ON fk_userID = userID ";
+			sql = sql + "GROUP BY lastName, firstName ORDER BY MAX(scoreValue) DESC LIMIT 1;";
+			
+			 
 			ResultSet rsLeader = db.getResultSet(sql);
 			
 			while(rsUser.next()){
