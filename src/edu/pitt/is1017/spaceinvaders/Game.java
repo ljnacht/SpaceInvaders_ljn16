@@ -214,7 +214,7 @@ public class Game extends Canvas {
 			
 			if (entity instanceof AlienEntity) {
 				// speed up by 2%
-				entity.setHorizontalMovement(entity.getHorizontalMovement() * 100);
+				entity.setHorizontalMovement(entity.getHorizontalMovement() * 1.02);
 			}
 		}
 	}
